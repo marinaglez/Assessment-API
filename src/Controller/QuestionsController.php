@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\DataTransformer\QuestionsTransformer;
 use App\Dto\Request\questionRequest;
+use App\Entity\Question;
 use App\Services\googleTranslateService;
 use App\Services\questionsService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -72,16 +74,20 @@ class QuestionsController extends AbstractController
     /**
      * @Route("/questions", name="Translate questions POST", methods={"POST"})
      * @ParamConverter("questionRequest", converter="fos_rest.request_body")
+     * @throws \Exception
      */
     public function createQuestion(questionRequest $questionRequest, ConstraintViolationListInterface $validationErrors): JsonResponse
     {
+//        var_dump($questionRequest);
 //        var_dump(Request::createFromGlobals()->getContent());
+        $questionTransFormer =  new QuestionsTransformer();
+        $question = $questionTransFormer->dtoToQuestion($questionRequest, new Question());
+        $this->questionsService->addQuestion($question);
+        $questions = $this->questionsService->getAllQuestions();
         if (count($validationErrors) > 0) {
             return $this->json($validationErrors, Response::HTTP_BAD_REQUEST);
         }
-        return $this->json([
-            'message' => 'POST',
-            'path' => 'src/Controller/QuestionsController.php',
-        ]);
+        return $this->json($questions->getQuestions(),Response::HTTP_OK);
+
     }
 }

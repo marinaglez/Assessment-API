@@ -51,7 +51,7 @@ class QuestionList
      */
     public function addQuestion($question)
     {
-        $this->questions[$question];
+        $this->questions[] = $question;
     }
 
 }

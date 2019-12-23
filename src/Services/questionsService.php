@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Entity\Choice;
 use App\Entity\Question;
 use App\Entity\QuestionList;
+use Symfony\Component\Filesystem\Filesystem;
 
 class questionsService
 {
@@ -18,14 +19,19 @@ class questionsService
      * @var googleTranslateService
      */
     private $googleTranslateService;
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
 
-    public function __construct(googleTranslateService $googleTranslateService)
+    public function __construct(googleTranslateService $googleTranslateService, Filesystem $filesystem)
     {
         $this->googleTranslateService = $googleTranslateService;
 
         $questionsJson = file_get_contents($this->questionsPath);
         $questions = json_decode($questionsJson, true);
         $this->questions = array_reverse($questions);
+        $this->filesystem = $filesystem;
     }
 
     /**
@@ -79,6 +85,19 @@ class questionsService
         }
         $questionList->setQuestions($questions);
         return $questionList;
+    }
+
+    public function  addQuestion(Question $question)
+    {
+        try {
+            $questionList = $this->getAllQuestions();
+        } catch (\Exception $e) {
+        }
+        $questionList->addQuestion($question);
+//        var_dump(json_encode($questionList, JSON_FORCE_OBJECT));exit;
+
+        file_put_contents($this->questionsPath, json_encode($questionList, JSON_FORCE_OBJECT));
+//        $this->filesystem->dumpFile($this->questionsPath, json_encode($questionList, JSON_FORCE_OBJECT));
     }
 
 }
