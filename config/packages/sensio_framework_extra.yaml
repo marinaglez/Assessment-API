@@ -1,5 +1,2 @@
 sensio_framework_extra:
-    request:
-        converters: true
-        auto_convert: true
-    view:    { annotations: true }
+    request: { converters: true }

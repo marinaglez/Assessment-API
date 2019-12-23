@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace App\DataTransformer;
 
-use App\Dto\Request\CustomerInfoRequest;
+use App\Dto\Request\questionRequest;
+use App\Entity\Choice;
+use App\Entity\Question;
 use Entity\PolicyHolder;
 
-class PolicyHolderDataTransformer
+class QuestionsTransformer
 {
     public function __construct()
     {
     }
 
-    public function dtoToPolicyHolder(CustomerInfoRequest $customerInfoRequest, PolicyHolder $policyHolder): PolicyHolder
+    public function dtoToQuestion(questionRequest $questionRequest, Question $question): Question
     {
         $policyHolder->setHolder($customerInfoRequest->getHolder());
         $policyHolder->setIdNumber($customerInfoRequest->getIdNumber());
